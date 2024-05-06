@@ -13,9 +13,11 @@ function fetchLocations(page, limit) {
                 console.log('No more locations found.');
                 return;
             }
+            const locationsTable = document.getElementById('locations-table');
+
             snapshot.forEach(doc => {
                 const locationData = doc.data();
-                renderLocations(locationData);
+                locationsTable.append(renderLocationResult(locationData);)
             });
             lastVisibleDocument = snapshot.docs[snapshot.docs.length - 1]; // Update lastVisibleDocument
         })
@@ -55,10 +57,10 @@ function updateActivePageNumber(activePage, container) {
 }
 
 
-function renderLocations(location) {
-    const locationsTable = document.getElementById('locations-table');
+function renderLocationResult(location) {
 
-    const locationRow = createDOMElement('div', 'row-parent', '', locationsTable);
+    const locationRow = document.createElement('div');
+    locationRow.className = 'row-parent';
 
     let locationName = createDOMElement('div', 'row-div-20', '', locationRow);
     createDOMElement('div', 'row-text', location.name, locationName);
@@ -75,10 +77,12 @@ function renderLocations(location) {
     } else {
         createDOMElement('div', 'row-div-15', 'None', websiteContainer);
     }
-
     
     let actionsContainer = createDOMElement('div', 'row-div-20', '', locationRow);
     let deleteButton = createDOMElement('div', 'delete-location-button', '', actionsContainer);
-
+    deleteButton.addEventListener('click', () => {
+        openDeleteModal(location);
+    });
+    
+    return locationRow
 }
-
