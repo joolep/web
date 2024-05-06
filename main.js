@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     //Build Tables
     fetchUsers()
-
+    fetchLocations()
         
     //Set initial states
     adminLocations.style.display = 'block';
