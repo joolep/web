@@ -169,7 +169,7 @@ function readAndUpload(file) {
     reader.readAsArrayBuffer(file);
 }
 
-function uploadDataToFirestore(data) {
+async function uploadDataToFirestore(data) {
     const batch = database.batch(); // Use a batch if multiple writes needed
     data.forEach((row, index) => {
         const locationId = generateRandomId(12);
@@ -206,16 +206,16 @@ function uploadDataToFirestore(data) {
         batch.set(docRef, location);
     });
 
-    batch.commit()
-        .then(() => {
-            document.getElementById('upload-status').style.display = 'flex'
-            document.getElementById('upload-status').textContent = 'Upload successful!';
-        })
-        .catch(error => {
-            console.error('Error uploading data:', error);
-            document.getElementById('upload-status').style.display = 'flex'
-            document.getElementById('upload-status').textContent = 'Upload failed!';
-        });
+    try {
+        await batch.commit();
+        console.log('All data successfully uploaded');
+        document.getElementById('upload-status').style.display = 'flex'
+        document.getElementById('upload-status').textContent = 'Upload successful!';
+    } catch (error) {
+        console.error('Batch upload failed:', error);
+        document.getElementById('upload-status').style.display = 'flex'
+        document.getElementById('upload-status').textContent = 'Upload failed!';
+    }
 }
 
 
