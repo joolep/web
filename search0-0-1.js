@@ -19,14 +19,11 @@ function createAutocompleteResults(results) {
     hitsContainer.className = 'header-autocomplete-results'
 
     if(results.hits.length != 0) {
-        for (i = 0; i < results.hits.length; i++) {
-
-            var hit = results.hits[i]
-    
-            hitsContainer.appendChild( renderLocationResult(hit))
+        if (results.hits.length != 0) {
+            results.hits.forEach(hit => {
+                hitsContainer.appendChild(renderLocationResult(hit));
+            });
         }
-    } else {
-        headerAutocompleteResults.style.display = 'none'
     }
 
     return hitsContainer.outerHTML
@@ -49,9 +46,11 @@ const headerRenderAutocomplete = (renderOptions, isFirstRender) => {
   }
 
   document.querySelector('#locations-search-field').value = currentRefinement;
-  widgetParams.container.innerHTML = indices
-    .map(createAutocompleteResults)
-    .join('');
+    // Append new results
+    indices.forEach(index => {
+      const resultElement = createAutocompleteResults(index);
+      widgetParams.container.appendChild(resultElement);
+    });
 };
 
 // Create the custom widget
@@ -69,7 +68,6 @@ headerSearch.addWidgets([
 ]);
 
 headerSearch.start()
-
 
 
 
