@@ -66,11 +66,16 @@ function renderLocations(location) {
     createDOMElement('div', 'row-div-15 row-text', location.locationType[0], locationRow);
     createDOMElement('div', 'row-div-30 row-text', location.location.address, locationRow);
 
-    let websiteContainer = createDOMElement('div', 'row-div-20', '', locationRow);
-    let linkIcon = createDOMElement('div', 'website-link', '', websiteContainer);
-    linkIcon.addEventListener('click', () => {
-        window.open(location.website)
-    })
+    let websiteContainer = createDOMElement('div', 'row-div-15', '', locationRow);
+    if (location.website) {
+        let linkIcon = createDOMElement('div', 'website-link', '', websiteContainer);
+        linkIcon.addEventListener('click', () => {
+            window.open(location.website)
+        })
+    } else {
+        createDOMElement('div', 'row-div-15', 'None', websiteContainer);
+    }
+
     
     let actionsContainer = createDOMElement('div', 'row-div-20', '', locationRow);
     let deleteButton = createDOMElement('div', 'delete-location-button', '', actionsContainer);
@@ -78,6 +83,4 @@ function renderLocations(location) {
         
     })
 }
-
-
 
