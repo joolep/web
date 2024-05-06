@@ -171,49 +171,55 @@ function readAndUpload(file) {
 
 async function uploadDataToFirestore(data) {
     const batch = database.batch(); // Use a batch if multiple writes needed
-    data.forEach((row, index) => {
+    const locationPromises = data.map(async (row) => {
         const locationId = generateRandomId(12);
-        const locationData = await geocodeAddress(row.Address);
-
-        const location = {
-          id : locationId,
-          name: row.Name || '',
-          cuisineCategory: row.CusineSpecialtyID ? [row.CusineSpecialtyID] : [],
-          additionalOfferings: row.AdditionalOfferingsID ? row.AdditionalOfferingsID.split(',').map(s => s.trim()) : [],
-          websiteURL: row.Website || '',
-          michelinRating: row.MichelinDistinction || '',
-          phoneNumber: row.PhoneNumber || '',
-          description: row.Description || '',
-          image: row.ImageUrl || '',
-          locationType: row.BusinessType ? [row.BusinessType] : [],
-          location: locationData,
-          menuURL: '',
-          hours: parseLocationHours(row.Hours),
-          comments: [],
-          features: [],
-          photos: [],
-          price: row.Price,
-          reservationsURL: '',
-          specials: [],
-          timesAvailable: [],
-          musicGenre: [],
-          profilePhoto: '',
-          promotionExpirationDate: new Date()
-        };
-        
-        
-        const docRef = database.collection('locations').doc(locationId);
-        batch.set(docRef, location);
+        try {
+            const locationData = await geocodeAddress(row.Address);
+            const location = {
+                id: locationId,
+                name: row.Name || '',
+                cuisineCategory: row.CusineSpecialtyID ? [row.CusineSpecialtyID] : [],
+                additionalOfferings: row.AdditionalOfferingsID ? row.AdditionalOfferingsID.split(',').map(s => s.trim()) : [],
+                websiteURL: row.Website || '',
+                michelinRating: row.MichelinDistinction || '',
+                phoneNumber: row.PhoneNumber || '',
+                description: row.Description || '',
+                image: row.ImageUrl || '',
+                locationType: row.BusinessType ? [row.BusinessType] : [],
+                location: locationData,
+                menuURL: '',
+                hours: parseLocationHours(row.Hours),
+                comments: [],
+                features: [],
+                photos: [],
+                price: row.Price,
+                reservationsURL: '',
+                specials: [],
+                timesAvailable: [],
+                musicGenre: [],
+                profilePhoto: '',
+                promotionExpirationDate: new Date()
+            };
+            
+            const docRef = database.collection('locations').doc(locationId);
+            batch.set(docRef, location);
+        } catch (error) {
+            console.error('Error geocoding address:', error);
+            // Optionally handle the error per location if needed
+            
+        }
     });
 
+    // Resolve all geocode promises
     try {
+        await Promise.all(locationPromises);
         await batch.commit();
         console.log('All data successfully uploaded');
-        document.getElementById('upload-status').style.display = 'flex'
+        document.getElementById('upload-status').style.display = 'flex';
         document.getElementById('upload-status').textContent = 'Upload successful!';
     } catch (error) {
         console.error('Batch upload failed:', error);
-        document.getElementById('upload-status').style.display = 'flex'
+        document.getElementById('upload-status').style.display = 'flex';
         document.getElementById('upload-status').textContent = 'Upload failed!';
     }
 }
