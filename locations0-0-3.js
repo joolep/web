@@ -17,7 +17,7 @@ function fetchLocations(page, limit) {
 
             snapshot.forEach(doc => {
                 const locationData = doc.data();
-                locationsTable.append(renderLocationResult(locationData);)
+                locationsTable.append(renderLocationResult(locationData))
             });
             lastVisibleDocument = snapshot.docs[snapshot.docs.length - 1]; // Update lastVisibleDocument
         })
