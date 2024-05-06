@@ -109,7 +109,7 @@ function openDeleteModal(location) {
 
 function deleteLocation(locationId) {
     database.collection('locations').doc(locationId).delete().then(() => {
-        console.log('Location successfully deleted');
+        console.log(`Location ${locationId} successfully deleted`);
         // Dismiss the modal
         document.getElementById('delete-modal').style.display = 'none';
         // Remove the div element from the table
