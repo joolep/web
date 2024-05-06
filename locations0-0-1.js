@@ -79,8 +79,6 @@ function renderLocations(location) {
     
     let actionsContainer = createDOMElement('div', 'row-div-20', '', locationRow);
     let deleteButton = createDOMElement('div', 'delete-location-button', '', actionsContainer);
-    linkIcon.addEventListener('click', () => {
-        
-    })
+
 }
 
