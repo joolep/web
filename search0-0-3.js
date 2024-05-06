@@ -47,13 +47,11 @@ const headerRenderAutocomplete = (renderOptions, isFirstRender) => {
 
   document.querySelector('#locations-search-field').value = currentRefinement;
     // Directly append new results if not an empty search
-    if (currentRefinement) {
-      indices.forEach(index => {
-          index.hits.forEach(hit => {
-              locationsTable.appendChild(renderLocationResult(hit));
-          });
-      });
-    }
+    indices.forEach(index => {
+        index.hits.forEach(hit => {
+            locationsTable.appendChild(renderLocationResult(hit));
+        });
+    });
 };
 
 // Create the custom widget
@@ -71,3 +69,4 @@ headerSearch.addWidgets([
 ]);
 
 headerSearch.start()
+
