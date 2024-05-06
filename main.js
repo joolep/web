@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", function() {
     
     //Build Tables
     fetchUsers()
-    fetchLocations()
+    fetchLocations(1, 100); // Each page fetches 100 items
+    setupPagination(1); //Fetches locations
+    fetchPromotions()
         
     //Set initial states
     adminLocations.style.display = 'block';
