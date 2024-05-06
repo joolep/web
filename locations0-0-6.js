@@ -201,7 +201,7 @@ function uploadDataToFirestore(data) {
         };
         
         
-        const docRef = database.collection('locations').doc(); // Automatically generate doc ID
+        const docRef = database.collection('locations').doc(locationId);
         batch.set(docRef, location);
     });
 
@@ -248,3 +248,4 @@ function parseLocationHours(hoursString) {
         return null;
     }).filter(Boolean); // Remove any null entries if parsing fails
 }
+
