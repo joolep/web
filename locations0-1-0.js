@@ -277,7 +277,8 @@ async function geocodeAddress(address) {
                 state: findComponent('administrative_area_level_1', components),
                 zipCode: findComponent('postal_code', components)
             };
-            locationObject.geohash = Geohash.encode(lat, lng);
+            locationObject.geohash = ngeohash.encode(lat, lng);
+
             return locationObject;
         } else {
             throw new Error('Geocoding failed with status: ' + response.data.status);
@@ -292,3 +293,4 @@ function findComponent(type, components) {
     const component = components.find(comp => comp.types.includes(type));
     return component ? component.long_name : '';
 }
+
