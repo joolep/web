@@ -55,4 +55,4 @@ locationsSearch.addWidgets([
     })
 ]);
 
-headerSearch.start()
+locationsSearch.start()
