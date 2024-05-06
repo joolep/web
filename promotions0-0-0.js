@@ -1,4 +1,6 @@
 
+var totalPrice = 0
+
 function fetchPromotions() {
     const promotionsRef = database.collection('promotions');
     return promotionsRef.get().then(snapshot => {
@@ -13,13 +15,15 @@ function fetchPromotions() {
                 const data = doc.data();
                 data.id = doc.id; // Including the document ID
                 promotions.push(data);
+                totalPrice += data.price
             });
 
             promotions.sort((a, b) => b.expirationDate - a.expirationDate);
-            return users;
+            return promotions;
         })
         .then(promotions => {
             renderPromotions(promotions);
+            document.getElementById('total-paid-header').innerHTML = `Total Paid : $${totalPrice}`
         })
         .catch(error => {
             console.error("Error fetching users: ", error);
@@ -37,17 +41,17 @@ function renderPromotions(promotions) {
 
         // Profile Photo & Full Name
         let promotionType = createDOMElement('div', 'row-div-20', "", rowParent);
-        if promotion.type == "shoutout" {
+        if (promotion.type == "shoutout") {
             createDOMElement('div', 'row-text', "📣📣 Shoutout", promotionType);
         } else {
             createDOMElement('div', 'row-text', "🎉🎉 Promotion", promotionType);
 
         }
         
-        createDOMElement('div', 'row-div-20 row-text', promotion.type, rowParent);
+        createDOMElement('div', 'row-div-20 row-text', promotion.locationID, rowParent);
         createDOMElement('div', 'row-div-20 row-text', formatDate(promotion.expirationDate), rowParent);
-        createDOMElement('div', 'row-div-20 row-text', promotion.userID, rowParent);
-        createDOMElement('div', 'row-div-20 row-text', promotion.status, rowParent);
+        createDOMElement('div', 'row-div-30 row-text', promotion.userID, rowParent);
+        createDOMElement('div', 'row-div-15 row-text', `$${promotion.price}`, rowParent);
         
     });
 }
