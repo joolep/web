@@ -173,10 +173,11 @@ function uploadDataToFirestore(data) {
     const batch = database.batch(); // Use a batch if multiple writes needed
     data.forEach((row, index) => {
         const locationId = generateRandomId(12);
+        const locationData = await geocodeAddress(row.Address);
+
         const location = {
           id : locationId,
           name: row.Name || '',
-          address: row.Address || '',
           cuisineCategory: row.CusineSpecialtyID ? [row.CusineSpecialtyID] : [],
           additionalOfferings: row.AdditionalOfferingsID ? row.AdditionalOfferingsID.split(',').map(s => s.trim()) : [],
           websiteURL: row.Website || '',
@@ -185,7 +186,7 @@ function uploadDataToFirestore(data) {
           description: row.Description || '',
           image: row.ImageUrl || '',
           locationType: row.BusinessType ? [row.BusinessType] : [],
-          location: { lat: 0, lng: 0 },
+          location: locationData,
           menuURL: '',
           hours: parseLocationHours(row.Hours),
           comments: [],
@@ -249,3 +250,39 @@ function parseLocationHours(hoursString) {
     }).filter(Boolean); // Remove any null entries if parsing fails
 }
 
+
+
+async function geocodeAddress(address) {
+    const apiKey = 'AIzaSyBhgi8CEmayQBeftVcs0PmWo3n7d7TfQiU';
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
+
+    try {
+        const response = await axios.get(url);
+        if (response.data.status === 'OK') {
+            const { lat, lng } = response.data.results[0].geometry.location;
+            const components = response.data.results[0].address_components;
+            const locationObject = {
+                address: address,
+                city: findComponent('locality', components),
+                country: findComponent('country', components),
+                geohash: '', // Geohash needs to be computed based on lat, lng
+                lat: lat,
+                lng: lng,
+                state: findComponent('administrative_area_level_1', components),
+                zipCode: findComponent('postal_code', components)
+            };
+            locationObject.geohash = Geohash.encode(lat, lng);
+            return locationObject;
+        } else {
+            throw new Error('Geocoding failed with status: ' + response.data.status);
+        }
+    } catch (error) {
+        console.error('Geocoding error:', error);
+        throw error;
+    }
+}
+
+function findComponent(type, components) {
+    const component = components.find(comp => comp.types.includes(type));
+    return component ? component.long_name : '';
+}
